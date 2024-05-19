@@ -568,20 +568,14 @@ contract SequencerInbox is DelegateCallAware, GasRefundEnabled, ISequencerInbox 
         if (!isBatchPoster[msg.sender] && msg.sender != address(rollup)) revert NotBatchPoster();
         if (isDelayProofRequired(afterDelayedMessagesRead)) revert DelayProofRequired();
 
-        // @audit-issue this function not performs validation on its inputs
-        // @audit-issue unexpected values could cause corruption within contract's state or cause reentrancy attacks or front-running attacks
         addSequencerL2BatchFromCalldataImpl(
-            sequenceNumber, // @audit-info no check to ensure the sequenceNumber is within a valid range or that it follows a specific order
-            data, // @audit-info There is no validation to ensure that data is valid or supports expected values based on the current state
-            afterDelayedMessagesRead, // @audit-info  prevMessageCount and newMessageCount could be not consistent with the contract's state and the messages being processed
+            sequenceNumber,
+            data,
+            afterDelayedMessagesRead,
             prevMessageCount,
             newMessageCount,
             false
         );
-
-        // @audit-info to mitigate this issue make sure sequenceNumber is incremented correctly and follows the right order
-        // @audit-info add checks to verify that if data is against the expected values based on the current state
-        // @audit-info ensure prevMessageCount and newMessageCount are consistent with the contract's state (or could cause corruption)
     }
 
     /// @inheritdoc ISequencerInbox
@@ -819,8 +813,6 @@ contract SequencerInbox is DelegateCallAware, GasRefundEnabled, ISequencerInbox 
             newMessageCount
         );
 
-        // @audit-info State-Changing operation
-        // @audit-info Consider using Checks-Effects-Interactions pattern to reduce risk of re-enterancy attacks.
         totalDelayedMessagesRead = afterDelayedMessagesRead;
 
         if (calldataLengthPosted > 0 && !isUsingFeeToken) {

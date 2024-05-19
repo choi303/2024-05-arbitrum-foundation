@@ -45,12 +45,7 @@ contract Bridge is AbsBridge, IEthBridge {
         bytes memory data
     ) internal override returns (bool success, bytes memory returnData) {
         // solhint-disable-next-line avoid-low-level-calls
-
-        // @audit-issue Avoid low level call without error handling
-        // @audit-issue This call can lead to failure which can be exploited or leave contract in an inconsistent state (reentrancy)
         (success, returnData) = to.call{value: value}(data);
-
-        // @audit-info Consider adding require/error-handling for call function result
     }
 
     function _baseFeeToReport() internal view override returns (uint256) {

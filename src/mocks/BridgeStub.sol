@@ -147,10 +147,6 @@ contract BridgeStub is IBridge, IEthBridge {
         bytes memory data
     ) internal returns (bool success, bytes memory returnData) {
         // solhint-disable-next-line avoid-low-level-calls
-
-        // @audit-issue Avoid low level call. Low-level call without error handling
-        // @audit-info This call can lead to failure which can be exploited or leave contract in an inconsistent state
-
         (success, returnData) = to.call{value: value}(data);
     }
 

@@ -28,9 +28,6 @@ contract SequencerInboxStub is SequencerInbox {
     }
 
     function addInitMessage(uint256 chainId) external {
-
-        // @audit-info Consider using Checks-Effects-Interactions pattern to reduce risk of re-enterancy attacks.
-
         bytes memory initMsg = abi.encodePacked(chainId);
         uint256 num = IEthBridge(address(bridge)).enqueueDelayedMessage(
             INITIALIZATION_MSG_TYPE,
